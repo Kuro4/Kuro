@@ -8,6 +8,36 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{Binding TextBoxWidth,RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type local:NumericUpDownControl}}}"/>
+                                <ColumnDefinition Width="{Binding ButtonWidth,RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type local:NumericUpDownControl}}}"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="PART_ValueBox"
+                                     TextWrapping="Wrap"
+                                     Text="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:NumericUpDownControl}}}"
+                                     VerticalContentAlignment="Center"
+                                     HorizontalContentAlignment="{Binding HorizontalValueAlignment,RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type local:NumericUpDownControl}}}"
+                                     IsReadOnly="{Binding IsReadOnly,RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type local:NumericUpDownControl}}}" 
+                                     Foreground ="{Binding CurrentValueColor, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:NumericUpDownControl}}}"
+                                     InputMethod.IsInputMethodEnabled="False"
+                                     Background="{x:Null}"/>
+                            <Grid Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <RepeatButton x:Name="PART_UpButton"
+                                              Content="{Binding UpContent,RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type local:NumericUpDownControl}}}"
+                                              FontSize="8"
+                                              Padding="0"/>
+                                <RepeatButton x:Name="PART_DownButton"
+                                              Content="{Binding DownContent,RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type local:NumericUpDownControl}}}"
+                                              Grid.Row="1" 
+                                              FontSize="8" 
+                                              Padding="0"/>
+                            </Grid>
+                        </Grid>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

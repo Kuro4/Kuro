@@ -4,8 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KuroCustomControlsTests"
+        xmlns:kuro="clr-namespace:KuroCustomControls;assembly=KuroCustomControls"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
+        <kuro:NumericUpDownControl HorizontalAlignment="Left" Margin="167,147,0,0" VerticalAlignment="Top" Width="105"/>
     </Grid>
 </Window>
