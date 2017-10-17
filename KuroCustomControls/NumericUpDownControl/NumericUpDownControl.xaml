@@ -15,11 +15,11 @@
                             </Grid.ColumnDefinitions>
                             <TextBox x:Name="PART_ValueBox"
                                      TextWrapping="Wrap"
-                                     Text="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:NumericUpDownControl}}}"
+                                     Text="{Binding Text, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:NumericUpDownControl}}, UpdateSourceTrigger=PropertyChanged}"
                                      VerticalContentAlignment="Center"
                                      HorizontalContentAlignment="{Binding HorizontalValueAlignment,RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type local:NumericUpDownControl}}}"
                                      IsReadOnly="{Binding IsReadOnly,RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type local:NumericUpDownControl}}}" 
-                                     Foreground ="{Binding CurrentValueColor, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:NumericUpDownControl}}}"
+                                     Foreground ="{Binding CurrentTextColor, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:NumericUpDownControl}}}"
                                      InputMethod.IsInputMethodEnabled="False"
                                      Background="{x:Null}"/>
                             <Grid Grid.Column="1">

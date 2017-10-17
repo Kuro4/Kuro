@@ -13,6 +13,9 @@ using System.Windows.Media;
 
 namespace KuroCustomControls
 {
+    /// <summary>
+    /// 数値を指定した値だけインクリメント、デクリメントできるスピンボタンを持つTextBox
+    /// </summary>
     public class NumericUpDownControl : Control
     {
         static NumericUpDownControl()
@@ -30,9 +33,8 @@ namespace KuroCustomControls
         }
         // Using a DependencyProperty as the backing store for Text.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register("Text", typeof(string), typeof(NumericUpDownControl), new PropertyMetadata("0"));
+            DependencyProperty.Register("Text", typeof(string), typeof(NumericUpDownControl), new PropertyMetadata("0", TextChanged));
         #endregion
-
         #region Valueプロパティ
         [Description("TextBoxに表示する値です。"), Category("共通")]
         public double Value
@@ -43,6 +45,17 @@ namespace KuroCustomControls
         // Using a DependencyProperty as the backing store for Value.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register("Value", typeof(double), typeof(NumericUpDownControl), new PropertyMetadata((double)0, ValueChanged));
+        #endregion
+        #region DecimalDigitsプロパティ
+        [Description("小数点以下の有効桁数です。指定桁以下の値は切り捨てされます。(表示状は0が増えます)"), Category("共通")]
+        public int DecimalDigits
+        {
+            get { return (int)GetValue(DecimalDigitsProperty); }
+            set { SetValue(DecimalDigitsProperty, value); }
+        }
+        // Using a DependencyProperty as the backing store for DecimalDigits.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DecimalDigitsProperty =
+            DependencyProperty.Register("DecimalDigits", typeof(int), typeof(NumericUpDownControl), new PropertyMetadata(0));
         #endregion
         #region UpContentプロパティ
         [Description("Valueを加算するボタンに表示するContentです。"), Category("共通")]
@@ -165,59 +178,57 @@ namespace KuroCustomControls
         public static readonly DependencyProperty IsHighlightToNegativeValueProperty =
             DependencyProperty.Register("IsHighlightToNegativeValue", typeof(bool), typeof(NumericUpDownControl), new PropertyMetadata(false, ValueChanged));
         #endregion
-        #region DefaultValueColorプロパティ
-        [Description("既定のTextBoxの文字色です。"), Category("共通")]
-        public Color DefaultValueColor
+        #region DefaultTextColorプロパティ
+        [Description("既定のTextの文字色です。"), Category("共通")]
+        public Color DefaultTextColor
         {
-            get { return (Color)GetValue(DefaultValueColorProperty); }
-            set { SetValue(DefaultValueColorProperty, value); }
+            get { return (Color)GetValue(DefaultTextColorProperty); }
+            set { SetValue(DefaultTextColorProperty, value); }
         }
-        // Using a DependencyProperty as the backing store for DefaultForeground.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty DefaultValueColorProperty =
-            DependencyProperty.Register("DefaultValueColor", typeof(Color), typeof(NumericUpDownControl), new PropertyMetadata(Colors.Black, ColorChanged));
+        // Using a DependencyProperty as the backing store for DefaultTextColor.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DefaultTextColorProperty =
+            DependencyProperty.Register("DefaultTextColor", typeof(Color), typeof(NumericUpDownControl), new PropertyMetadata(Colors.Black, ColorChanged));
         #endregion
-        #region NegativeValueColorプロパティ
+        #region NegativeValueTextColorプロパティ
         [Description("Valueが負の値になった時の文字色です。IsHighlightToNegativeValueがtrueの時のみ有効です。"), Category("共通")]
-        public Color NegativeValueColor
+        public Color NegativeValueTextColor
         {
-            get { return (Color)GetValue(NegativeValueColorProperty); }
-            set { SetValue(NegativeValueColorProperty, value); }
+            get { return (Color)GetValue(NegativeValueTextColorProperty); }
+            set { SetValue(NegativeValueTextColorProperty, value); }
         }
-        // Using a DependencyProperty as the backing store for HighlightBrush.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty NegativeValueColorProperty =
-            DependencyProperty.Register("NegativeValueColor", typeof(Color), typeof(NumericUpDownControl), new PropertyMetadata(Colors.Red, ColorChanged));
+        // Using a DependencyProperty as the backing store for NegativeValueTextColor.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty NegativeValueTextColorProperty =
+            DependencyProperty.Register("NegativeValueTextColor", typeof(Color), typeof(NumericUpDownControl), new PropertyMetadata(Colors.Red, ColorChanged));
         #endregion
-        #region CurrentValueColorプロパティ
-        [Description("現在のValueの色です。(読取専用)"), Category("共通")]
-        private static readonly DependencyPropertyKey CurrentValueColorPropertyKey =
+        #region CurrentTextColorプロパティ
+        [Description("現在のTextの色です。(読取専用)"), Category("共通")]
+        private static readonly DependencyPropertyKey CurrentTexteColorPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                "CurrentValueColor",
+                "CurrentTextColor",
                 typeof(SolidColorBrush),
                 typeof(NumericUpDownControl),
                 new PropertyMetadata(new SolidColorBrush(Colors.Black)));
-        public static readonly DependencyProperty CurrentValueColorProperty = CurrentValueColorPropertyKey.DependencyProperty;
-        public SolidColorBrush CurrentValueColor
+        public static readonly DependencyProperty CurrentTextColorProperty = CurrentTexteColorPropertyKey.DependencyProperty;
+        public SolidColorBrush CurrentTextColor
         {
-            get { return (SolidColorBrush)GetValue(CurrentValueColorProperty); }
-            private set { this.SetValue(CurrentValueColorPropertyKey, value); }
+            get { return (SolidColorBrush)GetValue(CurrentTextColorProperty); }
+            private set { this.SetValue(CurrentTexteColorPropertyKey, value); }
         }
         #endregion
         #endregion
-
         #region フィールド
         // XAMLで名前を付けた(イベントを使用する)コントロールの格納用変数
         private TextBox valueBox;
         private RepeatButton upButton;
         private RepeatButton downButton;
         #endregion
-
+        #region メソッド
         /// <summary>
         /// イベントの登録・解除
         /// </summary>
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-
             // 前のテンプレートのコントロールの後処理(イベントハンドラの解除)
             if (this.upButton != null)
             {
@@ -227,7 +238,7 @@ namespace KuroCustomControls
             {
                 this.downButton.Click -= this.DownClick;
             }
-            if(this.valueBox != null)
+            if (this.valueBox != null)
             {
                 this.valueBox.PreviewTextInput -= ValueBox_PreviewTextInput;
                 CommandManager.RemoveExecutedHandler(this.valueBox, ValueBox_PreviewExecuted);
@@ -236,7 +247,6 @@ namespace KuroCustomControls
             this.valueBox = this.GetTemplateChild("PART_ValueBox") as TextBox;
             this.upButton = this.GetTemplateChild("PART_UpButton") as RepeatButton;
             this.downButton = this.GetTemplateChild("PART_DownButton") as RepeatButton;
-
             // イベントハンドラの登録
             if (this.upButton != null)
             {
@@ -246,16 +256,12 @@ namespace KuroCustomControls
             {
                 this.downButton.Click += this.DownClick;
             }
-            if(this.valueBox != null)
+            if (this.valueBox != null)
             {
                 this.valueBox.PreviewTextInput += ValueBox_PreviewTextInput;
-                //this.valueBox
                 CommandManager.AddPreviewExecutedHandler(this.valueBox, ValueBox_PreviewExecuted);
             }
         }
-
-        #region メソッド
-
         /// <summary>
         /// 現在のValueの色を更新する
         /// </summary>
@@ -264,30 +270,53 @@ namespace KuroCustomControls
             Color res;
             if (this.IsHighlightToNegativeValue)
             {
-                if (this.Value >= 0) res = this.DefaultValueColor;
-                else res = this.NegativeValueColor;
+                if (this.Value >= 0) res = this.DefaultTextColor;
+                else res = this.NegativeValueTextColor;
             }
-            else res = this.DefaultValueColor;
-            if (this.CurrentValueColor.Color != res) this.CurrentValueColor = new SolidColorBrush(res);
+            else res = this.DefaultTextColor;
+            if (this.CurrentTextColor.Color != res) this.CurrentTextColor = new SolidColorBrush(res);
         }
-
+        /// <summary>
+        /// 小数点以下の桁数をtextに合わせて整形して返す(例：value(10),text("10.000")→return("10.000"))
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        private string HoldDigits(double value,string text)
+        {
+            var valueText = value.ToString();
+            //Textが小数点を含んでいない場合、そのままの値を返す
+            if (!text.Contains(".")) return valueText;
+            //valueの小数点以下の桁数
+            var valueDigit = valueText.Length - (valueText.IndexOf(".") + 1);
+            //textの小数点以下の桁数
+            var textDigit = text.Length - (text.IndexOf(".") + 1);
+            //Valueが小数点以下の値を持つ場合(例：10.100)
+            if (Math.Abs(value) % 1 > 0) return valueText.PadRight(valueText.Length + (textDigit - valueDigit), '0');
+            //Valueが小数点以下の値を持たない場合(例：10.000)
+            else return (valueText + ".").PadRight((valueText.Length + 1) + textDigit, '0');
+        }
+        /// <summary>
+        /// ValueをStepの値だけ加算する
+        /// </summary>
+        public void Increment() { this.Value += Step; }
+        /// <summary>
+        /// ValueをStepの値だけ減算する
+        /// </summary>
+        public void Decrement() { this.Value -= Step; }
         #region Valueの検証・矯正
         /// <summary>
-        /// 引数の値が上下限値を超えているか検証し、超えていれば矯正した値を返す
+        /// 引数の値が上下限値を超えているか検証し、超えていれば矯正した値を参照引数に入れ、trueを返す
         /// </summary>
         /// <param name="value">検証する値</param>
-        /// <returns>矯正した値</returns>
+        /// <returns>矯正したかどうか</returns>
         private bool ValidateValue(ref double value)
         {
             var resMax = value;
             var resMin = value;
-            //上限値を超えていれば
             if (ValidateMaxValue(ref resMax)) value = resMax;
-            //下限値を超えていれば
             else if (ValidateMinValue(ref resMin)) value = resMin;
-            //どちらも超えていなければ(矯正していなければ)
             else return false;
-            //矯正していれば
             return true;
         }
         /// <summary>
@@ -358,6 +387,18 @@ namespace KuroCustomControls
         #endregion
         #region コールバック
         /// <summary>
+        /// Text変更時のコールバックメソッド
+        /// Textがdouble型にパースできるならValueへ入れる
+        /// </summary>
+        /// <param name="d"></param>
+        /// <param name="e"></param>
+        private static void TextChanged(DependencyObject d,DependencyPropertyChangedEventArgs e)
+        {
+            var self = (NumericUpDownControl)d;
+            double value;
+            if (double.TryParse(self.Text, out value)) self.Value = value;
+        }
+        /// <summary>
         /// Value変更時のコールバックメソッド
         /// </summary>
         /// <param name="d"></param>
@@ -365,18 +406,26 @@ namespace KuroCustomControls
         private static void ValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var self = (NumericUpDownControl)d;
+            //プロパティはrefで渡せないのでローカル変数に入れる
             var value = self.Value;
             var res = self.ValidateValue(ref value);
-            self.Value = value;
+            //値を丸める
+            var roundValue = Math.Floor(value * Math.Pow(10, self.DecimalDigits)) / Math.Pow(10, self.DecimalDigits);
+            self.Value = roundValue;
+            //桁数を保持させたValueをTextに入れる
+            self.Text = self.HoldDigits(self.Value, self.Text);
             self.UpdateValueColor();
         }
-
+        /// <summary>
+        /// Color変更時のコールバックメソッド
+        /// </summary>
+        /// <param name="d"></param>
+        /// <param name="e"></param>
         private static void ColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var self = (NumericUpDownControl)d;
             self.UpdateValueColor();
         }
-
         /// <summary>
         /// 上限値より下限値が大きくなることを禁止し、上限・下限値の妥当性を保証する
         /// </summary>
@@ -402,11 +451,18 @@ namespace KuroCustomControls
         }
         #endregion
         #region イベント
-
-        // ボタンのクリックイベント
-        private void UpClick(object sender, RoutedEventArgs e) { this.Value += Step; }
-        private void DownClick(object sender, RoutedEventArgs e) { this.Value -= Step; }
-
+        /// <summary>
+        /// UpボタンクリックでValueをStepの値だけ加算する
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UpClick(object sender, RoutedEventArgs e) { this.Increment(); }
+        /// <summary>
+        /// DownボタンクリックでValueをStepの値だけ減算する
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DownClick(object sender, RoutedEventArgs e) { this.Decrement(); }
         /// <summary>
         /// 数値、小数点、-以外の入力を禁止する
         /// </summary>
@@ -425,53 +481,10 @@ namespace KuroCustomControls
                 else e.Handled = textBox.CaretIndex != 0;
             }
             //-より前の入力を禁止する
-            else if (text.Contains("-") && textBox.CaretIndex == 0 && textBox.SelectedText != text)
-            {
-                e.Handled = true;
-            }
+            else if (text.Contains("-") && textBox.CaretIndex == 0 && textBox.SelectedText != text) e.Handled = true;
             //数字のみ許容する
             else e.Handled = new Regex("[^0-9]+").IsMatch(e.Text);
         }
-        ///// <summary>
-        ///// 入力された値を検証・矯正する
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void ValueBox_TextChanged(object sender, TextChangedEventArgs e)
-        //{
-        //    var textBox = (TextBox)e.Source;
-        //    var text = textBox.Text;
-        //    //空白なら0もしくは下限値を入れるを入れる
-        //    if (string.IsNullOrWhiteSpace(text))
-        //    {
-        //        if (MinValue.HasValue) text = MinValue.Value.ToString();
-        //        else text = "0";
-        //        textBox.Text = text;
-        //        textBox.CaretIndex = text.Length;
-        //    }
-        //    else
-        //    {
-        //        //入力のため-と-0と.を許容する
-        //        if (text == "-" || text == "-0" || text.Last() == '.') return;
-        //        double value;
-        //        //数値なら値を検証してTextBoxに入れる
-        //        if (double.TryParse(text, out value))
-        //        {
-        //            //値を検証し、矯正したならその値を入れる
-        //            if (ValidateValue(ref value))
-        //            {
-        //                this.Value = value;
-        //                //textBox.Text = value.ToString();
-        //            }
-
-        //            //var res = ValidateValue(value).ToString();
-        //            //桁数を再現(ValidateValue(0.100)→0.1となるのを0.100に戻す)
-        //            //var length = text.Length;
-        //            //textBox.Text = res.PadRight(length, '0');
-        //        }
-        //    }
-        //}
-
         /// <summary>
         /// 貼付けとカットを禁止する
         /// </summary>
