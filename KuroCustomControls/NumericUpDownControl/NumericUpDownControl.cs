@@ -25,7 +25,7 @@ namespace KuroCustomControls
         }
         #region プロパティ
         #region Textプロパティ
-        [Description("TextBoxに表示するテキストです。"), Category("共通"),Browsable(false),ReadOnly(true)]
+        [Description("TextBoxに表示するテキストです。"), Category("共通"),ReadOnly(true),Browsable(false)]
         public string Text
         {
             get { return (string)GetValue(TextProperty); }
@@ -33,7 +33,7 @@ namespace KuroCustomControls
         }
         // Using a DependencyProperty as the backing store for Text.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register("Text", typeof(string), typeof(NumericUpDownControl), new PropertyMetadata("0", TextChanged));
+            DependencyProperty.Register("Text", typeof(string), typeof(NumericUpDownControl), new PropertyMetadata("0", OnTextChanged, OnCoerceText));
         #endregion
         #region Valueプロパティ
         [Description("TextBoxに表示する値です。"), Category("共通")]
@@ -44,10 +44,10 @@ namespace KuroCustomControls
         }
         // Using a DependencyProperty as the backing store for Value.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register("Value", typeof(double), typeof(NumericUpDownControl), new PropertyMetadata((double)0, ValueChanged));
+            DependencyProperty.Register("Value", typeof(double), typeof(NumericUpDownControl), new PropertyMetadata((double)0,OnValueChanged, OnCoerceValue));
         #endregion
         #region DecimalDigitsプロパティ
-        [Description("小数点以下の有効桁数です。指定桁以下の値は切り捨てされます。(表示状は0が増えます)"), Category("共通")]
+        [Description("小数点以下の有効桁数です(15まで)。\r\nValueは指定桁まで四捨五入され、Textは指定桁以下に入力できなくなります。"), Category("共通")]
         public int DecimalDigits
         {
             get { return (int)GetValue(DecimalDigitsProperty); }
@@ -55,7 +55,18 @@ namespace KuroCustomControls
         }
         // Using a DependencyProperty as the backing store for DecimalDigits.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DecimalDigitsProperty =
-            DependencyProperty.Register("DecimalDigits", typeof(int), typeof(NumericUpDownControl), new PropertyMetadata(0));
+            DependencyProperty.Register("DecimalDigits", typeof(int), typeof(NumericUpDownControl), new PropertyMetadata(0,null, OnCoerceDecimalDigits));
+        #endregion
+        #region IsHoldDigitsプロパティ
+        [Description("trueならValue変更時、小数点以下の末尾の0を保持します。\r\n(例：[true]0.100→0.100 , [false]0.100→0.1)"), Category("共通")]
+        public bool IsHoldDigits
+        {
+            get { return (bool)GetValue(IsHoldDigitsProperty); }
+            set { SetValue(IsHoldDigitsProperty, value); }
+        }
+        // Using a DependencyProperty as the backing store for IsHoldDigits.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsHoldDigitsProperty =
+            DependencyProperty.Register("IsHoldDigits", typeof(bool), typeof(NumericUpDownControl), new PropertyMetadata(true, OnValueChanged));
         #endregion
         #region UpContentプロパティ
         [Description("Valueを加算するボタンに表示するContentです。"), Category("共通")]
@@ -66,7 +77,7 @@ namespace KuroCustomControls
         }
         // Using a DependencyProperty as the backing store for Value.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty UpContentProperty =
-            DependencyProperty.Register("UpContent", typeof(object), typeof(NumericUpDownControl), new PropertyMetadata("↑"));
+            DependencyProperty.Register("UpContent", typeof(object), typeof(NumericUpDownControl), new PropertyMetadata("▲"));
         #endregion
         #region DownContentプロパティ
         [Description("Valueを減算するボタンに表示するContentです。"), Category("共通")]
@@ -77,7 +88,7 @@ namespace KuroCustomControls
         }
         // Using a DependencyProperty as the backing store for Value.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DownContentProperty =
-            DependencyProperty.Register("DownContent", typeof(object), typeof(NumericUpDownControl), new PropertyMetadata("↓"));
+            DependencyProperty.Register("DownContent", typeof(object), typeof(NumericUpDownControl), new PropertyMetadata("▼"));
         #endregion
         #region TextBoxWidthプロパティ
         [Description("TextBoxの幅です。"), Category("レイアウト")]
@@ -121,7 +132,7 @@ namespace KuroCustomControls
         }
         // Using a DependencyProperty as the backing store for MaxValue.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty MaxValueProperty =
-            DependencyProperty.Register("MaxValue", typeof(double?), typeof(NumericUpDownControl), new PropertyMetadata(null, EnsureMaxMinValueValidity));
+            DependencyProperty.Register("MaxValue", typeof(double?), typeof(NumericUpDownControl), new PropertyMetadata(null, null, OnCoerceMaxValue));
         #endregion
         #region MinValueプロパティ
         [Description("Valueの下限値です。"), Category("共通")]
@@ -132,7 +143,7 @@ namespace KuroCustomControls
         }
         // Using a DependencyProperty as the backing store for MinValue.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty MinValueProperty =
-            DependencyProperty.Register("MinValue", typeof(double?), typeof(NumericUpDownControl), new PropertyMetadata(null, EnsureMaxMinValueValidity));
+            DependencyProperty.Register("MinValue", typeof(double?), typeof(NumericUpDownControl), new PropertyMetadata(null, null, OnCoerceMinValue));
         #endregion
         #region Stepプロパティ
         [Description("Valueを増減させる時の変化値です。"), Category("共通")]
@@ -176,7 +187,7 @@ namespace KuroCustomControls
         }
         // Using a DependencyProperty as the backing store for IsHighlightToNegativeValue.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IsHighlightToNegativeValueProperty =
-            DependencyProperty.Register("IsHighlightToNegativeValue", typeof(bool), typeof(NumericUpDownControl), new PropertyMetadata(false, ValueChanged));
+            DependencyProperty.Register("IsHighlightToNegativeValue", typeof(bool), typeof(NumericUpDownControl), new PropertyMetadata(false, OnValueChanged));
         #endregion
         #region DefaultTextColorプロパティ
         [Description("既定のTextの文字色です。"), Category("共通")]
@@ -202,17 +213,17 @@ namespace KuroCustomControls
         #endregion
         #region CurrentTextColorプロパティ
         [Description("現在のTextの色です。(読取専用)"), Category("共通")]
-        private static readonly DependencyPropertyKey CurrentTexteColorPropertyKey =
+        private static readonly DependencyPropertyKey CurrentTextColorPropertyKey =
             DependencyProperty.RegisterReadOnly(
                 "CurrentTextColor",
                 typeof(SolidColorBrush),
                 typeof(NumericUpDownControl),
                 new PropertyMetadata(new SolidColorBrush(Colors.Black)));
-        public static readonly DependencyProperty CurrentTextColorProperty = CurrentTexteColorPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty CurrentTextColorProperty = CurrentTextColorPropertyKey.DependencyProperty;
         public SolidColorBrush CurrentTextColor
         {
             get { return (SolidColorBrush)GetValue(CurrentTextColorProperty); }
-            private set { this.SetValue(CurrentTexteColorPropertyKey, value); }
+            private set { this.SetValue(CurrentTextColorPropertyKey, value); }
         }
         #endregion
         #endregion
@@ -263,6 +274,24 @@ namespace KuroCustomControls
             }
         }
         /// <summary>
+        /// ValueをStepの値だけ加算する
+        /// </summary>
+        public void Increment() { this.Value += this.Step; }
+        /// <summary>
+        /// Valueを引数のstepの値だけ加算する
+        /// </summary>
+        /// <param name="step"></param>
+        public void Increment(double step) { this.Value += step; }
+        /// <summary>
+        /// ValueをStepの値だけ減算する
+        /// </summary>
+        public void Decrement() { this.Value -= this.Step; }
+        /// <summary>
+        /// Valueを引数のstepの値だけ減算する
+        /// </summary>
+        /// <param name="step"></param>
+        public void Decrement(double step) { this.Value -= step; }
+        /// <summary>
         /// 現在のValueの色を更新する
         /// </summary>
         private void UpdateValueColor()
@@ -296,15 +325,20 @@ namespace KuroCustomControls
             //Valueが小数点以下の値を持たない場合(例：10.000)
             else return (valueText + ".").PadRight((valueText.Length + 1) + textDigit, '0');
         }
-        /// <summary>
-        /// ValueをStepの値だけ加算する
-        /// </summary>
-        public void Increment() { this.Value += Step; }
-        /// <summary>
-        /// ValueをStepの値だけ減算する
-        /// </summary>
-        public void Decrement() { this.Value -= Step; }
         #region Valueの検証・矯正
+        /// <summary>
+        /// 引数の値が上下限値を超えているか検証し、超えていれば矯正した値を返す
+        /// </summary>
+        /// <param name="value">検証する値</param>
+        /// <returns>矯正値</returns>
+        private double ValidateValue(double value)
+        {
+            var resMax = value;
+            var resMin = value;
+            if (ValidateMaxValue(ref resMax)) return resMax;
+            else if (ValidateMinValue(ref resMin)) return resMin;
+            else return value;
+        }
         /// <summary>
         /// 引数の値が上下限値を超えているか検証し、超えていれば矯正した値を参照引数に入れ、trueを返す
         /// </summary>
@@ -318,19 +352,6 @@ namespace KuroCustomControls
             else if (ValidateMinValue(ref resMin)) value = resMin;
             else return false;
             return true;
-        }
-        /// <summary>
-        /// 引数の値が上下限値を超えているか検証し、超えていれば矯正した値を返す
-        /// 第2引数で上限値を検証するかを指定する(fakseなら下限値の検証)
-        /// </summary>
-        /// <param name="value">検証する値</param>
-        /// <param name="isMaxMode">上限値を検証するか</param>
-        /// <returns>矯正した値</returns>
-        private double ValidateValue(double value, bool isMaxMode)
-        {
-            if (isMaxMode) ValidateMaxValue(ref value);
-            else ValidateMinValue(ref value);
-            return value;
         }
         /// <summary>
         /// 上限値が設定されていれば上限値を超えているかを判定し、
@@ -387,34 +408,107 @@ namespace KuroCustomControls
         #endregion
         #region コールバック
         /// <summary>
+        /// Text変更時の強制コールバックメソッド
+        /// 小数点以下の桁数を指定桁数で制限する
+        /// </summary>
+        /// <param name="d"></param>
+        /// <param name="baseValue"></param>
+        /// <returns></returns>
+        private static object OnCoerceText(DependencyObject d,object baseValue)
+        {
+            var self = (NumericUpDownControl)d;
+            var newValue = (string)baseValue;
+            if (newValue.Contains("."))
+            {
+                //文字数
+                var length = newValue.Length;
+                //少数桁数 = 文字数 - "."の位置(indexが0からのカウントのため-1)
+                var digit = length - newValue.IndexOf(".") - 1;
+                if(digit > self.DecimalDigits) return newValue.Substring(0, length - (digit - self.DecimalDigits));
+            }
+            return baseValue;
+        }
+        /// <summary>
         /// Text変更時のコールバックメソッド
-        /// Textがdouble型にパースできるならValueへ入れる
+        /// Textがdouble型にパースできるならValue伝播させる
         /// </summary>
         /// <param name="d"></param>
         /// <param name="e"></param>
-        private static void TextChanged(DependencyObject d,DependencyPropertyChangedEventArgs e)
+        private static void OnTextChanged(DependencyObject d,DependencyPropertyChangedEventArgs e)
         {
             var self = (NumericUpDownControl)d;
+            System.Diagnostics.Debug.WriteLine("OnTextChangedコールバック : " + self.Value);
             double value;
-            if (double.TryParse(self.Text, out value)) self.Value = value;
+            if (double.TryParse(e.NewValue.ToString(), out value)) self.Value = value;
+        }
+        /// <summary>
+        /// Value変更時の強制コールバックメソッド
+        /// 値を有効範囲内に強制して流す
+        /// </summary>
+        /// <param name="d"></param>
+        /// <param name="baseValue"></param>
+        /// <returns></returns>
+        private static object OnCoerceValue(DependencyObject d, object baseValue)
+        {
+            var self = (NumericUpDownControl)d;
+            var value = (double)baseValue;
+            //値の検証、強制
+            value = self.ValidateValue(value);
+            //指定桁数で丸める
+            return Math.Round(value, self.DecimalDigits);
         }
         /// <summary>
         /// Value変更時のコールバックメソッド
+        /// 値をTextへ伝搬させ、文字色を更新する
         /// </summary>
         /// <param name="d"></param>
         /// <param name="e"></param>
-        private static void ValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var self = (NumericUpDownControl)d;
-            //プロパティはrefで渡せないのでローカル変数に入れる
-            var value = self.Value;
-            var res = self.ValidateValue(ref value);
-            //値を丸める
-            var roundValue = Math.Floor(value * Math.Pow(10, self.DecimalDigits)) / Math.Pow(10, self.DecimalDigits);
-            self.Value = roundValue;
-            //桁数を保持させたValueをTextに入れる
-            self.Text = self.HoldDigits(self.Value, self.Text);
+            self.Text = self.IsHoldDigits ? self.HoldDigits(self.Value, self.Text) : self.Value.ToString();
             self.UpdateValueColor();
+        }
+        /// <summary>
+        /// MinValue&lt;MaxValueの関係が正しいかどうかを判定し、矯正値を返す
+        /// </summary>
+        /// <param name="d"></param>
+        /// <param name="baseValue"></param>
+        /// <returns></returns>
+        private static object OnCoerceMaxValue(DependencyObject d, object baseValue)
+        {
+            var self = (NumericUpDownControl)d;
+            var maxValue = (double?)baseValue;
+            if (self.MinValue.HasValue && maxValue.HasValue)
+                if (self.MinValue.Value > maxValue) return self.MinValue;
+            return baseValue;
+        }
+        /// <summary>
+        /// MinValue&lt;MaxValueの関係が正しいかどうかを判定し、矯正値を返す
+        /// </summary>
+        /// <param name="d"></param>
+        /// <param name="baseValue"></param>
+        /// <returns></returns>
+        private static object OnCoerceMinValue(DependencyObject d, object baseValue)
+        {
+            var self = (NumericUpDownControl)d;
+            var minValue = (double?)baseValue;
+            if (self.MaxValue.HasValue && minValue.HasValue)
+                if (self.MaxValue.Value < minValue) return self.MaxValue;
+            return baseValue;
+        }
+        /// <summary>
+        /// DecimalDigits変更時のコールバックメソッド
+        /// 正の値に矯正する(最大値は15)
+        /// </summary>
+        /// <param name="d"></param>
+        /// <param name="baseValue"></param>
+        /// <returns></returns>
+        private static object OnCoerceDecimalDigits(DependencyObject d,object baseValue)
+        {
+            var newValue = (int)baseValue;
+            newValue = Math.Abs(newValue);
+            return newValue <= 15 ? newValue : 15;
         }
         /// <summary>
         /// Color変更時のコールバックメソッド
@@ -425,29 +519,6 @@ namespace KuroCustomControls
         {
             var self = (NumericUpDownControl)d;
             self.UpdateValueColor();
-        }
-        /// <summary>
-        /// 上限値より下限値が大きくなることを禁止し、上限・下限値の妥当性を保証する
-        /// </summary>
-        /// <param name="d"></param>
-        /// <param name="e"></param>
-        private static void EnsureMaxMinValueValidity(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var self = (NumericUpDownControl)d;
-            if (self.MaxValue.HasValue && self.MinValue.HasValue)
-            {
-                if (self.MaxValue.Value < self.MinValue.Value)
-                {
-                    if (e.Property.Name == "MaxValue")
-                    {
-                        self.MaxValue = self.MinValue;
-                    }
-                    else if (e.Property.Name == "MinValue")
-                    {
-                        self.MinValue = self.MaxValue;
-                    }
-                }
-            }
         }
         #endregion
         #region イベント
@@ -465,6 +536,7 @@ namespace KuroCustomControls
         private void DownClick(object sender, RoutedEventArgs e) { this.Decrement(); }
         /// <summary>
         /// 数値、小数点、-以外の入力を禁止する
+        /// また、DecimalDigitsの制限値以下の少数桁の入力を禁止する
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -472,8 +544,8 @@ namespace KuroCustomControls
         {
             var textBox = (TextBox)e.Source;
             var text = textBox.Text;
-            //小数点は1つだけ許容する
-            if (e.Text == ".") e.Handled = text.Contains(".");
+            //小数点は1つだけ許容する(SelectedText内にあり、上書きする時も許容)
+            if (e.Text == ".") e.Handled = text.Contains(".") && !textBox.SelectedText.Contains(".");
             //-は先頭に1つだけ許容する(SelectedText内にあり、上書きする時も許容)
             else if (e.Text == "-")
             {

@@ -4,5 +4,6 @@
     xmlns:local="clr-namespace:KuroCustomControls">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/KuroCustomControls;component/NumericUpDownControl/NumericUpDownControl.xaml"/>
+        <ResourceDictionary Source="/KuroCustomControls;component/TimePickerControl/TimePickerControl.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
