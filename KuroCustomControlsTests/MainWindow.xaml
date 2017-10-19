@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <kuro:NumericUpDownControl x:Name="numericUpDownControl" HorizontalAlignment="Left" Margin="157,101,0,0" VerticalAlignment="Top" Width="84" IsReadOnly="False" MaxValue="5" MinValue="-5" DecimalDigits="5"/>
+        <kuro:NumericUpDownControl x:Name="numericUpDownControl" HorizontalAlignment="Left" Margin="157,101,0,0" VerticalAlignment="Top" Width="84" IsReadOnly="False" DecimalDigits="2"/>
         <Label Content="{Binding Value, ElementName=numericUpDownControl}" HorizontalAlignment="Left" Margin="129,151,0,0" VerticalAlignment="Top" Width="112"/>
     </Grid>
 </Window>

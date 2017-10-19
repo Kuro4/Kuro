@@ -437,7 +437,6 @@ namespace KuroCustomControls
         private static void OnTextChanged(DependencyObject d,DependencyPropertyChangedEventArgs e)
         {
             var self = (NumericUpDownControl)d;
-            System.Diagnostics.Debug.WriteLine("OnTextChangedコールバック : " + self.Value);
             double value;
             if (double.TryParse(e.NewValue.ToString(), out value)) self.Value = value;
         }
@@ -545,7 +544,7 @@ namespace KuroCustomControls
             var textBox = (TextBox)e.Source;
             var text = textBox.Text;
             //小数点は1つだけ許容する(SelectedText内にあり、上書きする時も許容)
-            if (e.Text == ".") e.Handled = text.Contains(".") && !textBox.SelectedText.Contains(".");
+            if (e.Text == ".") e.Handled = text.Contains(".") && !textBox.SelectedText.Contains(".") || this.DecimalDigits == 0;
             //-は先頭に1つだけ許容する(SelectedText内にあり、上書きする時も許容)
             else if (e.Text == "-")
             {
