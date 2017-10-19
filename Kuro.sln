@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KuroCustomControls", "KuroC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KuroCustomControlsTests", "KuroCustomControlsTests\KuroCustomControlsTests.csproj", "{CEAE0FB4-2759-4647-BF8F-F7ECF39BAA86}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KuroUtilities", "KuroUtilities\KuroUtilities.csproj", "{FB68560A-C75C-4832-B96E-0A3434AE6B97}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{CEAE0FB4-2759-4647-BF8F-F7ECF39BAA86}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEAE0FB4-2759-4647-BF8F-F7ECF39BAA86}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CEAE0FB4-2759-4647-BF8F-F7ECF39BAA86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB68560A-C75C-4832-B96E-0A3434AE6B97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB68560A-C75C-4832-B96E-0A3434AE6B97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB68560A-C75C-4832-B96E-0A3434AE6B97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB68560A-C75C-4832-B96E-0A3434AE6B97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

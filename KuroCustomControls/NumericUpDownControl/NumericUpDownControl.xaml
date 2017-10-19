@@ -21,6 +21,8 @@
                                      IsReadOnly="{Binding IsReadOnly,RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type local:NumericUpDownControl}}}" 
                                      Foreground ="{Binding CurrentTextColor, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:NumericUpDownControl}}}"
                                      InputMethod.IsInputMethodEnabled="False"
+                                     BorderBrush="{Binding TextBoxBorderBrush, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:NumericUpDownControl}}, UpdateSourceTrigger=PropertyChanged}"
+                                     BorderThickness="{Binding TextBoxBorderThickness, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:NumericUpDownControl}}, UpdateSourceTrigger=PropertyChanged}"
                                      Background="{x:Null}"/>
                             <Grid Grid.Column="1">
                                 <Grid.RowDefinitions>

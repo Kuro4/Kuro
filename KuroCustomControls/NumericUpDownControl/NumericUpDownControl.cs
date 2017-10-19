@@ -226,6 +226,28 @@ namespace KuroCustomControls
             private set { this.SetValue(CurrentTextColorPropertyKey, value); }
         }
         #endregion
+        #region TextBoxBorderBrushプロパティ
+        [Description("TextBoxの枠の色です。"), Category("ブラシ")]
+        public Brush TextBoxBorderBrush
+        {
+            get { return (Brush)GetValue(TextBoxBorderBrushProperty); }
+            set { SetValue(TextBoxBorderBrushProperty, value); }
+        }
+        // Using a DependencyProperty as the backing store for TextBoxBorderBrush.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty TextBoxBorderBrushProperty =
+            DependencyProperty.Register("TextBoxBorderBrush", typeof(Brush), typeof(NumericUpDownControl), new PropertyMetadata(Brushes.LightGray));
+        #endregion
+        #region TextBoxBorderThicknessプロパティ
+        [Description("TextBoxの枠線の太さです。"), Category("外観")]
+        public Thickness TextBoxBorderThickness
+        {
+            get { return (Thickness)GetValue(TextBoxBorderThicknessProperty); }
+            set { SetValue(TextBoxBorderThicknessProperty, value); }
+        }
+        // Using a DependencyProperty as the backing store for TextBoxBorderThickness.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty TextBoxBorderThicknessProperty =
+            DependencyProperty.Register("TextBoxBorderThickness", typeof(Thickness), typeof(NumericUpDownControl), new PropertyMetadata(new Thickness(1,1,1,1)));
+        #endregion
         #endregion
         #region フィールド
         // XAMLで名前を付けた(イベントを使用する)コントロールの格納用変数
