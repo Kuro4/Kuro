@@ -249,6 +249,7 @@ namespace KuroCustomControls
             DependencyProperty.Register("TextBoxBorderThickness", typeof(Thickness), typeof(NumericUpDownControl), new PropertyMetadata(new Thickness(1,1,1,1)));
         #endregion
         #endregion
+
         #region フィールド
         // XAMLで名前を付けた(イベントを使用する)コントロールの格納用変数
         private TextBox valueBox;
@@ -298,12 +299,20 @@ namespace KuroCustomControls
         /// <summary>
         /// ValueをStepの値だけ加算する
         /// </summary>
-        public void Increment() { this.Value += this.Step; }
+        public void Increment()
+        {
+            this.Value += this.Step;
+            this.OnValueIncremented(new EventArgs());
+        }
         /// <summary>
         /// Valueを引数のstepの値だけ加算する
         /// </summary>
         /// <param name="step"></param>
-        public void Increment(double step) { this.Value += step; }
+        public void Increment(double step)
+        {
+            this.Value += step;
+            this.OnValueIncremented(new EventArgs());
+        }
         /// <summary>
         /// ValueをStepの値だけ減算する
         /// </summary>
@@ -589,6 +598,27 @@ namespace KuroCustomControls
             {
                 e.Handled = true;
             }
+        }
+        #endregion
+        #region 独自イベント
+        public event EventHandler ValueIncremented;
+        /// <summary>
+        /// Valueを加算した時に発生します。
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnValueIncremented(EventArgs e)
+        {
+            ValueIncremented?.Invoke(this, e);
+        }
+
+        public event EventHandler ValueDecremented;
+        /// <summary>
+        /// Valueを減算した時に発生します。
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnValueDecremented(EventArgs e)
+        {
+            ValueDecremented?.Invoke(this, e);
         }
         #endregion
         #endregion

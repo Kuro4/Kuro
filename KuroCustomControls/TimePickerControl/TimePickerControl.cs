@@ -74,8 +74,8 @@ namespace KuroCustomControls
         }
 
         #region フィールド
-        private NumericUpDownControl hours = new NumericUpDownControl();
-        private NumericUpDownControl minutes = new NumericUpDownControl();
+        private NumericUpDownControl hour;
+        private NumericUpDownControl minute;
         #endregion
 
         #region メソッド
@@ -87,38 +87,33 @@ namespace KuroCustomControls
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            //// 前のテンプレートのコントロールの後処理(イベントハンドラの解除)
-            //if (this.upButton != null)
-            //{
-            //    this.upButton.Click -= this.UpClick;
-            //}
-            //if (this.downButton != null)
-            //{
-            //    this.downButton.Click -= this.DownClick;
-            //}
-            //if (this.valueBox != null)
-            //{
-            //    this.valueBox.PreviewTextInput -= ValueBox_PreviewTextInput;
-            //    CommandManager.RemoveExecutedHandler(this.valueBox, ValueBox_PreviewExecuted);
-            //}
-            //// テンプレートからコントロールの取得
-            //this.valueBox = this.GetTemplateChild("PART_ValueBox") as TextBox;
-            //this.upButton = this.GetTemplateChild("PART_UpButton") as RepeatButton;
-            //this.downButton = this.GetTemplateChild("PART_DownButton") as RepeatButton;
-            //// イベントハンドラの登録
-            //if (this.upButton != null)
-            //{
-            //    this.upButton.Click += this.UpClick;
-            //}
-            //if (this.downButton != null)
-            //{
-            //    this.downButton.Click += this.DownClick;
-            //}
-            //if (this.valueBox != null)
-            //{
-            //    this.valueBox.PreviewTextInput += ValueBox_PreviewTextInput;
-            //    CommandManager.AddPreviewExecutedHandler(this.valueBox, ValueBox_PreviewExecuted);
-            //}
+            // 前のテンプレートのコントロールの後処理(イベントハンドラの解除)
+            if (this.hour != null)
+            {
+                hour.ValueIncremented -= Hour_ValueIncremented;
+            }
+            if (this.minute != null)
+            {
+
+            }
+
+            // テンプレートからコントロールの取得
+            this.hour = this.GetTemplateChild("PART_Hour") as NumericUpDownControl;
+            this.minute = this.GetTemplateChild("PART_Minute") as NumericUpDownControl;
+            // イベントハンドラの登録
+            if (this.hour != null)
+            {
+                hour.ValueIncremented += Hour_ValueIncremented;
+            }
+            if (this.minute != null)
+            {
+
+            }
+        }
+
+        private void Hour_ValueIncremented(object sender, EventArgs e)
+        {
+            MessageBox.Show(sender.ToString());
         }
 
         #endregion

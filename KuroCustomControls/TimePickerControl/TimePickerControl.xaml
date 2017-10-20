@@ -24,7 +24,8 @@
                                 IsReadOnly="False"
                                 IsLoop="True"
                                 TextBoxWidth="5*"
-                                ButtonWidth="3*" >
+                                ButtonWidth="3*"
+                                TextBoxBorderBrush="{x:Null}" >
                             </local:NumericUpDownControl>
                             <Label
                                 Content=":"
@@ -40,7 +41,8 @@
                                 IsLoop="True"
                                 IsReadOnly="False"
                                 ButtonWidth="3*"
-                                TextBoxWidth="5*"/>
+                                TextBoxWidth="5*"
+                                TextBoxBorderBrush="{x:Null}"/>
                         </Grid>
                     </Border>
                 </ControlTemplate>
