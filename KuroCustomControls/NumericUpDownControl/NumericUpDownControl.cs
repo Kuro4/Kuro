@@ -497,6 +497,7 @@ namespace KuroCustomControls
         {
             var self = (NumericUpDownControl)d;
             self.Text = self.IsHoldDigits ? self.HoldDigits(self.Value, self.Text) : self.Value.ToString();
+            self.OnValueChanged(new EventArgs());
             self.UpdateValueColor();
         }
         /// <summary>
@@ -619,6 +620,16 @@ namespace KuroCustomControls
         protected virtual void OnValueDecremented(EventArgs e)
         {
             ValueDecremented?.Invoke(this, e);
+        }
+
+        public event EventHandler ValueChanged;
+        /// <summary>
+        /// Value値が変更した時に発生します。
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnValueChanged(EventArgs e)
+        {
+            ValueChanged?.Invoke(this, e);
         }
         #endregion
         #endregion

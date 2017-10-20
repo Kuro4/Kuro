@@ -8,12 +8,17 @@
         x:Class="KuroCustomControlsTests.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
+    <Window.DataContext>
+        <local:VM_MainWindow/>
+    </Window.DataContext>
     <Grid>
 
         <kuro:NumericUpDownControl x:Name="numericUpDownControl" HorizontalAlignment="Left" Margin="157,101,0,0" VerticalAlignment="Top" Width="84" IsReadOnly="False" DecimalDigits="2"/>
         <Label Content="{Binding Value, ElementName=numericUpDownControl}" HorizontalAlignment="Left" Margin="129,151,0,0" VerticalAlignment="Top" Width="112"/>
-        <kuro:TimePickerControl HorizontalAlignment="Left" Margin="85,212,0,0" VerticalAlignment="Top" Width="108" MinutesStep="30" BorderThickness="1"/>
-        <Label Content="Label" HorizontalAlignment="Left" Margin="232,216,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="325,79,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <kuro:TimePickerControl x:Name="timePickerControl" HorizontalAlignment="Left" Margin="85,212,0,0" VerticalAlignment="Top" Width="108" MinutesStep="30" BorderThickness="1"/>
+        <Label Content="{Binding Hours, ElementName=timePickerControl}" HorizontalAlignment="Left" Margin="85,179,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.568,0.125"/>
+        <Label Content="{Binding Minutes, ElementName=timePickerControl}" HorizontalAlignment="Left" Margin="157,179,0,0" VerticalAlignment="Top"/>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="310,59,0,0" VerticalAlignment="Top" Width="75" Command="{Binding testCom}"/>
+        <Label Content="{Binding tp.Time, Mode=OneWay}" HorizontalAlignment="Left" Margin="330,28,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

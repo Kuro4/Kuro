@@ -58,6 +58,7 @@
     <Compile Include="UserControlForDesign.xaml.cs">
       <DependentUpon>UserControlForDesign.xaml</DependentUpon>
     </Compile>
+    <Compile Include="VM_MainWindow.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -106,6 +107,10 @@
     <ProjectReference Include="..\KuroCustomControls\KuroCustomControls.csproj">
       <Project>{a44065b9-9fbb-47e1-8525-6ae7d8d3a7e7}</Project>
       <Name>KuroCustomControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KuroUtilities\KuroUtilities.csproj">
+      <Project>{FB68560A-C75C-4832-B96E-0A3434AE6B97}</Project>
+      <Name>KuroUtilities</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
