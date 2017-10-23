@@ -48,6 +48,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="ExplorerStyleTreeView\ExplorerStyleTreeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="NumericUpDownControl\NumericUpDownControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -62,6 +66,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExplorerStyleTreeView\CustomExplorerStyleTreeView.cs" />
+    <Compile Include="ExplorerStyleTreeView\ExplorerStyleTreeView.cs" />
     <Compile Include="NumericUpDownControl\NumericUpDownControl.cs" />
     <Compile Include="OriginalEventArgs\DoubleChangedEventArgs.cs" />
     <Compile Include="OriginalEventArgs\IntChangedEventArgs.cs" />

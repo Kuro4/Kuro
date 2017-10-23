@@ -11,14 +11,14 @@
     <Window.DataContext>
         <local:VM_MainWindow/>
     </Window.DataContext>
-    <Grid>
+    <Grid HorizontalAlignment="Right" Width="517">
 
         <kuro:NumericUpDownControl x:Name="numericUpDownControl" HorizontalAlignment="Left" Margin="157,101,0,0" VerticalAlignment="Top" Width="84" IsReadOnly="False" DecimalDigits="2" IsLoop="True"/>
-        <Label Content="{Binding Value, ElementName=numericUpDownControl}" HorizontalAlignment="Left" Margin="129,151,0,0" VerticalAlignment="Top" Width="112"/>
-        <kuro:TimePickerControl x:Name="timePickerControl" HorizontalAlignment="Left" Margin="85,212,0,0" VerticalAlignment="Top" Width="119" BorderThickness="1"/>
-        <Label Content="{Binding Hours, ElementName=timePickerControl}" HorizontalAlignment="Left" Margin="85,179,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.568,0.125"/>
-        <Label Content="{Binding Minutes, ElementName=timePickerControl}" HorizontalAlignment="Left" Margin="157,179,0,0" VerticalAlignment="Top"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="310,59,0,0" VerticalAlignment="Top" Width="75" Command="{Binding testCom}"/>
-        <Label Content="{Binding tp.Time, Mode=OneWay}" HorizontalAlignment="Left" Margin="330,28,0,0" VerticalAlignment="Top"/>
+        <Label Content="{Binding Value, ElementName=numericUpDownControl}" HorizontalAlignment="Left" Margin="157,73,0,0" VerticalAlignment="Top" Width="112"/>
+        <kuro:TimePickerControl x:Name="timePickerControl" HorizontalAlignment="Left" Margin="339,179,0,0" VerticalAlignment="Top" Width="119" BorderThickness="1"/>
+        <Label Content="{Binding Hours, ElementName=timePickerControl}" HorizontalAlignment="Left" Margin="352,218,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.568,0.125"/>
+        <Label Content="{Binding Minutes, ElementName=timePickerControl}" HorizontalAlignment="Left" Margin="441,218,0,0" VerticalAlignment="Top"/>
+        <Label Content="{Binding Time, ElementName=timePickerControl, Mode=OneWay}" HorizontalAlignment="Left" Margin="368,282,0,0" VerticalAlignment="Top"/>
+        <kuro:ExplorerStyleTreeView Margin="0,0,417,0"/>
     </Grid>
 </Window>

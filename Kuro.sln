@@ -9,6 +9,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KuroCustomControlsTests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KuroUtilities", "KuroUtilities\KuroUtilities.csproj", "{FB68560A-C75C-4832-B96E-0A3434AE6B97}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{6B0DB2B8-42C6-4289-A9EA-489A28F2B420}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "KuroCustomControls", "KuroCustomControls", "{5EC6B374-CBD7-4786-AB6E-ED550384EA59}"
+	ProjectSection(SolutionItems) = preProject
+		Document\KuroCustomControls\NumericUpDownControl.md = Document\KuroCustomControls\NumericUpDownControl.md
+		Document\KuroCustomControls\OriginalEventArgs.md = Document\KuroCustomControls\OriginalEventArgs.md
+		Document\KuroCustomControls\TimePickerControl.md = Document\KuroCustomControls\TimePickerControl.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +39,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5EC6B374-CBD7-4786-AB6E-ED550384EA59} = {6B0DB2B8-42C6-4289-A9EA-489A28F2B420}
 	EndGlobalSection
 EndGlobal
