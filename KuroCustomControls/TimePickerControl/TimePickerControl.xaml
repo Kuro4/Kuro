@@ -20,7 +20,7 @@
                                 MinValue="0"
                                 Value="{Binding Hours, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TimePickerControl}}, UpdateSourceTrigger=PropertyChanged}"
                                 Step="{Binding HoursStep, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TimePickerControl}}}"
-                                IsReadOnly="{Binding IsReadOnly, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TimePickerControl}}}"
+                                IsReadOnly="{Binding IsReadOnlyHours, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TimePickerControl}}}"
                                 IsLoop="True"
                                 TextBoxWidth="5*"
                                 ButtonWidth="3*"
@@ -30,7 +30,8 @@
                                 Content="{Binding DelimiterContent, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TimePickerControl}}}"
                                 Grid.Column="1"
                                 VerticalContentAlignment="Center"
-                                HorizontalContentAlignment="Center"/>
+                                HorizontalContentAlignment="Center"
+                                Width="22"/>
                             <local:NumericUpDownControl
                                 x:Name="PART_Minute"
                                 Grid.Column="2"
@@ -38,7 +39,7 @@
                                 MinValue="0"
                                 Value="{Binding Minutes, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TimePickerControl}}, UpdateSourceTrigger=PropertyChanged}"
                                 Step="{Binding MinutesStep,RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type local:TimePickerControl}}}"
-                                IsReadOnly="{Binding IsReadOnly, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TimePickerControl}}}"
+                                IsReadOnly="{Binding IsReadOnlyMinutes, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TimePickerControl}}}"
                                 IsLoop="True"
                                 TextBoxWidth="5*"
                                 ButtonWidth="3*"

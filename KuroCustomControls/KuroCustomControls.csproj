@@ -63,7 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NumericUpDownControl\NumericUpDownControl.cs" />
+    <Compile Include="OriginalEventArgs\DoubleChangedEventArgs.cs" />
     <Compile Include="OriginalEventArgs\IntChangedEventArgs.cs" />
+    <Compile Include="OriginalEventArgs\LoopedEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

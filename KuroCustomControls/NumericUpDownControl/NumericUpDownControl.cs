@@ -249,7 +249,6 @@ namespace KuroCustomControls
             DependencyProperty.Register("TextBoxBorderThickness", typeof(Thickness), typeof(NumericUpDownControl), new PropertyMetadata(new Thickness(1,1,1,1)));
         #endregion
         #endregion
-
         #region フィールド
         // XAMLで名前を付けた(イベントを使用する)コントロールの格納用変数
         private TextBox valueBox;
@@ -301,8 +300,9 @@ namespace KuroCustomControls
         /// </summary>
         public void Increment()
         {
+            var oldValue = this.Value;
             this.Value += this.Step;
-            this.OnValueIncremented(new EventArgs());
+            this.OnValueIncremented(new DoubleChangedEventArgs(this.Value,oldValue));
         }
         /// <summary>
         /// Valueを引数のstepの値だけ加算する
@@ -310,18 +310,29 @@ namespace KuroCustomControls
         /// <param name="step"></param>
         public void Increment(double step)
         {
+            var oldValue = this.Value;
             this.Value += step;
-            this.OnValueIncremented(new EventArgs());
+            this.OnValueIncremented(new DoubleChangedEventArgs(this.Value, oldValue));
         }
         /// <summary>
         /// ValueをStepの値だけ減算する
         /// </summary>
-        public void Decrement() { this.Value -= this.Step; }
+        public void Decrement()
+        {
+            var oldValue = this.Value;
+            this.Value -= this.Step;
+            this.OnValueDecremented(new DoubleChangedEventArgs(this.Value, oldValue));
+        }
         /// <summary>
         /// Valueを引数のstepの値だけ減算する
         /// </summary>
         /// <param name="step"></param>
-        public void Decrement(double step) { this.Value -= step; }
+        public void Decrement(double step)
+        {
+            var oldValue = this.Value;
+            this.Value -= step;
+            this.OnValueDecremented(new DoubleChangedEventArgs(this.Value, oldValue));
+        }
         /// <summary>
         /// 現在のValueの色を更新する
         /// </summary>
@@ -366,45 +377,33 @@ namespace KuroCustomControls
         {
             var resMax = value;
             var resMin = value;
-            if (ValidateMaxValue(ref resMax)) return resMax;
-            else if (ValidateMinValue(ref resMin)) return resMin;
+            if (ValidateMaxValue(ref resMax))
+            {
+                this.OnLooped(new LoopedEventArgs(true));
+                return resMax;
+            }
+            else if (ValidateMinValue(ref resMin))
+            {
+                this.OnLooped(new LoopedEventArgs(false));
+                return resMin;
+            }
             else return value;
         }
         /// <summary>
-        /// 引数の値が上下限値を超えているか検証し、超えていれば矯正した値を参照引数に入れ、trueを返す
-        /// </summary>
-        /// <param name="value">検証する値</param>
-        /// <returns>矯正したかどうか</returns>
-        private bool ValidateValue(ref double value)
-        {
-            var resMax = value;
-            var resMin = value;
-            if (ValidateMaxValue(ref resMax)) value = resMax;
-            else if (ValidateMinValue(ref resMin)) value = resMin;
-            else return false;
-            return true;
-        }
-        /// <summary>
         /// 上限値が設定されていれば上限値を超えているかを判定し、
-        /// さらにループ設定されていれば下限値もしくは0を参照引数へ代入する
+        /// さらにループ設定されていればループ値もしくは0を参照引数へ代入する
         /// また、値を矯正した場合はtrueを返す
         /// </summary>
         /// <param name="value">検証する値</param>
         /// <returns>値を矯正したかどうか</returns>
         private bool ValidateMaxValue(ref double value)
-        {
-            if (MaxValue.HasValue)
+        { 
+            if (this.MaxValue.HasValue)
             {
-                if (MaxValue.Value < value)
+                if (this.MaxValue.Value < value)
                 {
-                    if (IsLoop)
-                    {
-                        value = MinValue.HasValue ? MinValue.Value : 0;
-                    }
-                    else
-                    {
-                        value = MaxValue.Value;
-                    }
+                    if (this.IsLoop) value = this.MinValue.HasValue ? this.MinValue.Value + (value - (this.MaxValue.Value + 1)) : 0;
+                    else value = this.MaxValue.Value;
                     return true;
                 }
             }
@@ -412,25 +411,19 @@ namespace KuroCustomControls
         }
         /// <summary>
         /// 下限値が設定されていれば下限値を超えているかを判定し、
-        /// さらにループ設定されていれば上限値もしくは0を参照引数へ代入する
+        /// さらにループ設定されていればループ値もしくは0を参照引数へ代入する
         /// また、値を矯正した場合はtrueを返す
         /// </summary>
         /// <param name="value">検証する値</param>
         /// <returns>値を矯正したかどうか</returns>
         private bool ValidateMinValue(ref double value)
         {
-            if (MinValue.HasValue)
+            if (this.MinValue.HasValue)
             {
-                if (MinValue.Value > value)
+                if (this.MinValue.Value > value)
                 {
-                    if (IsLoop)
-                    {
-                        value = MaxValue.HasValue ? MaxValue.Value : 0;
-                    }
-                    else
-                    {
-                        value = MinValue.Value;
-                    }
+                    if (this.IsLoop) value = this.MaxValue.HasValue ? (this.MaxValue.Value + 1) - (this.MinValue.Value - value) : 0;
+                    else value = this.MinValue.Value;
                     return true;
                 }
             }
@@ -497,7 +490,7 @@ namespace KuroCustomControls
         {
             var self = (NumericUpDownControl)d;
             self.Text = self.IsHoldDigits ? self.HoldDigits(self.Value, self.Text) : self.Value.ToString();
-            self.OnValueChanged(new EventArgs());
+            self.OnValueChanged(new DoubleChangedEventArgs((double)e.NewValue,(double)e.OldValue));
             self.UpdateValueColor();
         }
         /// <summary>
@@ -552,7 +545,7 @@ namespace KuroCustomControls
             self.UpdateValueColor();
         }
         #endregion
-        #region イベント
+        #region イベント処理
         /// <summary>
         /// UpボタンクリックでValueをStepの値だけ加算する
         /// </summary>
@@ -601,35 +594,42 @@ namespace KuroCustomControls
             }
         }
         #endregion
-        #region 独自イベント
-        public event EventHandler ValueIncremented;
+        #region イベント
+        public event DoubleChangedEventHandler ValueIncremented;
         /// <summary>
         /// Valueを加算した時に発生します。
         /// </summary>
         /// <param name="e"></param>
-        protected virtual void OnValueIncremented(EventArgs e)
+        protected virtual void OnValueIncremented(DoubleChangedEventArgs e)
         {
             ValueIncremented?.Invoke(this, e);
         }
-
-        public event EventHandler ValueDecremented;
+        public event DoubleChangedEventHandler ValueDecremented;
         /// <summary>
         /// Valueを減算した時に発生します。
         /// </summary>
         /// <param name="e"></param>
-        protected virtual void OnValueDecremented(EventArgs e)
+        protected virtual void OnValueDecremented(DoubleChangedEventArgs e)
         {
             ValueDecremented?.Invoke(this, e);
         }
-
-        public event EventHandler ValueChanged;
+        public event DoubleChangedEventHandler ValueChanged;
         /// <summary>
         /// Value値が変更した時に発生します。
         /// </summary>
         /// <param name="e"></param>
-        protected virtual void OnValueChanged(EventArgs e)
+        protected virtual void OnValueChanged(DoubleChangedEventArgs e)
         {
             ValueChanged?.Invoke(this, e);
+        }
+        public event LoopedEventHandler Looped;
+        /// <summary>
+        /// Valueがループした時に発生します。
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnLooped(LoopedEventArgs e)
+        {
+            Looped?.Invoke(this, e);
         }
         #endregion
         #endregion

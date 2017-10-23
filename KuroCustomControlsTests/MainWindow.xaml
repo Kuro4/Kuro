@@ -13,9 +13,9 @@
     </Window.DataContext>
     <Grid>
 
-        <kuro:NumericUpDownControl x:Name="numericUpDownControl" HorizontalAlignment="Left" Margin="157,101,0,0" VerticalAlignment="Top" Width="84" IsReadOnly="False" DecimalDigits="2"/>
+        <kuro:NumericUpDownControl x:Name="numericUpDownControl" HorizontalAlignment="Left" Margin="157,101,0,0" VerticalAlignment="Top" Width="84" IsReadOnly="False" DecimalDigits="2" IsLoop="True"/>
         <Label Content="{Binding Value, ElementName=numericUpDownControl}" HorizontalAlignment="Left" Margin="129,151,0,0" VerticalAlignment="Top" Width="112"/>
-        <kuro:TimePickerControl x:Name="timePickerControl" HorizontalAlignment="Left" Margin="85,212,0,0" VerticalAlignment="Top" Width="108" MinutesStep="30" BorderThickness="1"/>
+        <kuro:TimePickerControl x:Name="timePickerControl" HorizontalAlignment="Left" Margin="85,212,0,0" VerticalAlignment="Top" Width="119" BorderThickness="1"/>
         <Label Content="{Binding Hours, ElementName=timePickerControl}" HorizontalAlignment="Left" Margin="85,179,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.568,0.125"/>
         <Label Content="{Binding Minutes, ElementName=timePickerControl}" HorizontalAlignment="Left" Margin="157,179,0,0" VerticalAlignment="Top"/>
         <Button Content="Button" HorizontalAlignment="Left" Margin="310,59,0,0" VerticalAlignment="Top" Width="75" Command="{Binding testCom}"/>
