@@ -5,6 +5,5 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/KuroCustomControls;component/NumericUpDownControl/NumericUpDownControl.xaml"/>
         <ResourceDictionary Source="/KuroCustomControls;component/TimePickerControl/TimePickerControl.xaml"/>
-        <ResourceDictionary Source="/KuroCustomControls;component/ExplorerStyleTreeView/ExplorerStyleTreeView.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

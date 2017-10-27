@@ -12,13 +12,8 @@ using System.Windows.Media;
 
 namespace KuroCustomControls
 {
-    public class ExplorerStyleTreeView : Control
+    public class ExplorerStyleTreeView : TreeView
     {
-        static ExplorerStyleTreeView()
-        {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(ExplorerStyleTreeView),
-                new FrameworkPropertyMetadata(typeof(ExplorerStyleTreeView)));
-        }
         #region プロパティ
         [Description("ルートフォルダのコレクションです。"), Category("共通")]
         public ObservableCollection<DirectoryInfo> Roots
@@ -28,7 +23,7 @@ namespace KuroCustomControls
         }
         // Using a DependencyProperty as the backing store for Roots.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty RootsProperty =
-            DependencyProperty.Register("Roots", typeof(int), typeof(ExplorerStyleTreeView), new PropertyMetadata(0));
+            DependencyProperty.Register("Roots", typeof(int), typeof(ExplorerStyleTreeView), new PropertyMetadata(null));
         #region FolderImageプロパティ
         [Description("フォルダのアイコンです。設定しなければ標準のアイコンになります。"),Category("共通")]
         public ImageSource FolderIcon
@@ -61,25 +56,18 @@ namespace KuroCustomControls
 
         #endregion
         #region メソッド
-        ///// <summary>
-        ///// イベントの登録・解除
-        ///// </summary>
-        //public override void OnApplyTemplate()
-        //{
-        //    base.OnApplyTemplate();
-        //    // 前のテンプレートのコントロールの後処理(イベントハンドラの解除)
-        //    if (this.upButton != null)
-        //    {
-        //        this.upButton.Click -= this.UpClick;
-        //    }
-        //    // テンプレートからコントロールの取得
-        //    this.valueBox = this.GetTemplateChild("PART_ValueBox") as TextBox;
-        //    // イベントハンドラの登録
-        //    if (this.upButton != null)
-        //    {
-        //        this.upButton.Click += this.UpClick;
-        //    }
-        //}
+        public ExplorerStyleTreeView()
+        {
+            SetDefaultDirectories();
+        }
+
+        private void SetDefaultDirectories()
+        {
+            foreach(var drive in DriveInfo.GetDrives().Where(x => x.IsReady))
+            {
+                this.AddChild(new DirectoryNode(drive.RootDirectory));
+            }
+        }
         #endregion
     }
 }

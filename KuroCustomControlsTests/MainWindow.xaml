@@ -19,6 +19,7 @@
         <Label Content="{Binding Hours, ElementName=timePickerControl}" HorizontalAlignment="Left" Margin="352,218,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.568,0.125"/>
         <Label Content="{Binding Minutes, ElementName=timePickerControl}" HorizontalAlignment="Left" Margin="441,218,0,0" VerticalAlignment="Top"/>
         <Label Content="{Binding Time, ElementName=timePickerControl, Mode=OneWay}" HorizontalAlignment="Left" Margin="368,282,0,0" VerticalAlignment="Top"/>
-        <kuro:ExplorerStyleTreeView Margin="0,0,388,0"/>
+        <kuro:ExplorerStyleTreeView HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="300" Width="142"/>
+
     </Grid>
 </Window>
