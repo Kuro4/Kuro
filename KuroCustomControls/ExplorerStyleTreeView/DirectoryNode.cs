@@ -19,8 +19,30 @@ namespace KuroCustomControls
     public class DirectoryNode : BaseNode
     {
         #region プロパティ
+        //#region OpenFolderIcon
+        //[Description("ノード展開時に表示するフォルダのアイコンを指定します。"),Category("共通")]
+        //public ImageSource OpenFolderIcon
+        //{
+        //    get { return (ImageSource)GetValue(OpenFolderIconProperty); }
+        //    set { SetValue(OpenFolderIconProperty, value); }
+        //}
+        //// Using a DependencyProperty as the backing store for OpenFolderIcon.  This enables animation, styling, binding, etc...
+        //public static readonly DependencyProperty OpenFolderIconProperty =
+        //    DependencyProperty.RegisterAttached("OpenFolderIcon", typeof(ImageSource), typeof(DirectoryNode), new FrameworkPropertyMetadata(Properties.Resources.FolderOpen_16x.ToImageSource(),FrameworkPropertyMetadataOptions.Inherits,OnIconChanged));
+        //#endregion
+        //#region CloseFolderIcon
+        //[Description("ノード格納時に表示するフォルダのアイコンを指定します。"), Category("共通")]
+        //public ImageSource CloseFolderIcon
+        //{
+        //    get { return (ImageSource)GetValue(CloseFolderIconProperty); }
+        //    set { SetValue(CloseFolderIconProperty, value); }
+        //}
+        //// Using a DependencyProperty as the backing store for CloseFolderIcon.  This enables animation, styling, binding, etc...
+        //public static readonly DependencyProperty CloseFolderIconProperty =
+        //    DependencyProperty.RegisterAttached("CloseFolderIcon", typeof(ImageSource), typeof(DirectoryNode), new FrameworkPropertyMetadata(Properties.Resources.Folder_16x.ToImageSource(),FrameworkPropertyMetadataOptions.Inherits, OnIconChanged));
+        //#endregion
         #region OpenFolderIcon
-        [Description("ノード展開時に表示するフォルダのアイコンを指定します。"),Category("共通")]
+        [Description("ノード展開時に表示するフォルダのアイコンを指定します。"), Category("共通")]
         public ImageSource OpenFolderIcon
         {
             get { return (ImageSource)GetValue(OpenFolderIconProperty); }
@@ -28,7 +50,7 @@ namespace KuroCustomControls
         }
         // Using a DependencyProperty as the backing store for OpenFolderIcon.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty OpenFolderIconProperty =
-            DependencyProperty.RegisterAttached("OpenFolderIcon", typeof(ImageSource), typeof(DirectoryNode), new FrameworkPropertyMetadata(Properties.Resources.FolderOpen_16x.ToImageSource(),FrameworkPropertyMetadataOptions.Inherits,OnIconChanged));
+            DependencyProperty.RegisterAttached("OpenFolderIcon", typeof(ImageSource), typeof(DirectoryNode), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits, OnIconChanged));
         #endregion
         #region CloseFolderIcon
         [Description("ノード格納時に表示するフォルダのアイコンを指定します。"), Category("共通")]
@@ -39,7 +61,7 @@ namespace KuroCustomControls
         }
         // Using a DependencyProperty as the backing store for CloseFolderIcon.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CloseFolderIconProperty =
-            DependencyProperty.RegisterAttached("CloseFolderIcon", typeof(ImageSource), typeof(DirectoryNode), new FrameworkPropertyMetadata(Properties.Resources.Folder_16x.ToImageSource(),FrameworkPropertyMetadataOptions.Inherits, OnIconChanged));
+            DependencyProperty.RegisterAttached("CloseFolderIcon", typeof(ImageSource), typeof(DirectoryNode), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits, OnIconChanged));
         #endregion
         #region Directoryプロパティ
         [Description("このノードのディレクトリです。string型のパス、もしくはDirectoryInfo型のインスタンスを指定します。"),Category("共通")]
@@ -77,6 +99,14 @@ namespace KuroCustomControls
         #endregion
         #region フィールド
         /// <summary>
+        /// ディレクトリに関連付けられた展開時のアイコン(実際は格納時と同じアイコン)
+        /// </summary>
+        private ImageSource associatedOpenIcon = null;
+        /// <summary>
+        /// ディレクトリに関連付けられた格納時のアイコン(実際は展開時と同じアイコン)
+        /// </summary>
+        private ImageSource associatedCloseIcon = null;
+        /// <summary>
         /// 1度でも展開したかどうか
         /// </summary>
         private bool hasExpandedOnce = false;
@@ -109,10 +139,12 @@ namespace KuroCustomControls
             {
                 if (dir.Exists)
                 {
+                    System.Diagnostics.Debug.WriteLine($"{dir.Name}はUpdateされました");
                     this.HeaderText = dir.Name;
                     this.AddDummyNode(dir);
-                    this.OpenFolderIcon = (ImageSource)OpenFolderIconProperty.DefaultMetadata.DefaultValue;
-                    this.CloseFolderIcon = (ImageSource)CloseFolderIconProperty.DefaultMetadata.DefaultValue;
+                    associatedOpenIcon = this.OpenFolderIcon == null ? KuroUtilities.Win32.SHGetFileInfoEx.GetAssociatedImage(dir.FullName, false).ToImageSource() : null;
+                    associatedCloseIcon = this.CloseFolderIcon == null ? KuroUtilities.Win32.SHGetFileInfoEx.GetAssociatedImage(dir.FullName, false).ToImageSource() : null;
+                    UpdateHeaderIcon();
                     return;
                 }
             }
@@ -121,6 +153,15 @@ namespace KuroCustomControls
             this.OpenFolderIcon = errIcon;
             this.CloseFolderIcon = errIcon;
         }
+
+        private void UpdateHeaderIcon()
+        {
+            ImageSource icon;
+            if (this.IsExpanded) icon = this.OpenFolderIcon ?? this.associatedOpenIcon;
+            else icon = this.CloseFolderIcon ?? this.associatedCloseIcon;
+            this.HeaderIcon = icon;
+        }
+
         /// <summary>
         /// 指定したディレクトリにサブディレクトリかファイルが存在するならダミーノードを追加する
         /// </summary>
@@ -130,16 +171,13 @@ namespace KuroCustomControls
             if (!dir.Exists) return;
             try
             {
-                //サブディレクトリ・ファイルの存在を検索
-                if (dir.EnumerateFileSystemInfos().Any())
-                {
-                    this.AddChild(new BaseNode());
-                }
+                //サブディレクトリ・ファイルの存在を検索し、存在するならダミーノード追加
+                if (dir.EnumerateFileSystemInfos().Any()) this.AddChild(new BaseNode());
             }
             //アクセス拒否、ディレクトリ・ファイルが見つからないエラーをスキップ
             catch (Exception e) when (e is UnauthorizedAccessException || e is DirectoryNotFoundException || e is FileNotFoundException)
             {
-                Console.WriteLine(e.Source + "：" + e.Message);
+                Console.WriteLine($"{e.Source}：{e.Message}");
             }
         }
         /// <summary>
@@ -150,8 +188,10 @@ namespace KuroCustomControls
             this.Items.Clear();
             var directory = this.Directory as DirectoryInfo;
             if (directory == null) return;
+
             //DirectoryNodeを追加
-            directory.GetDirectories().ToList().ForEach(x => this.AddChild(new DirectoryNode(x)));
+            directory.GetDirectories().ToList().ForEach(x =>
+            this.AddChild(new DirectoryNode(x)));
             //パターンに一致するFileNodeを追加
             directory.GetFiles().Where(x => new Regex(this.SearchPattern).IsMatch(x.Name)).ToList().ForEach(x => this.AddChild(new FileNode(x)));
         }
@@ -165,7 +205,8 @@ namespace KuroCustomControls
         {
             var self = d as DirectoryNode;
             if (self == null) return;
-            self.HeaderIcon = self.IsExpanded ? self.OpenFolderIcon : self.CloseFolderIcon;
+            self.UpdateHeaderIcon();
+            //self.HeaderIcon = self.IsExpanded ? self.OpenFolderIcon : self.CloseFolderIcon;
         }
         /// <summary>
         /// Directoryに入るオブジェクトをDirectoryInfoに制限する(stringは変換する)
@@ -209,7 +250,8 @@ namespace KuroCustomControls
         protected override void OnExpanded(RoutedEventArgs e)
         {
             base.OnExpanded(e);
-            this.HeaderIcon = this.OpenFolderIcon;
+            //this.HeaderIcon = this.associatedOpenIcon ?? this.OpenFolderIcon;
+            this.UpdateHeaderIcon();
             if (!this.hasExpandedOnce)
             {
                 this.AddNode();
@@ -223,7 +265,8 @@ namespace KuroCustomControls
         protected override void OnCollapsed(RoutedEventArgs e)
         {
             base.OnCollapsed(e);
-            this.HeaderIcon = this.CloseFolderIcon;
+            this.UpdateHeaderIcon();
+            //if (!this.OpenFolderIcon.Equals(this.CloseFolderIcon)) this.HeaderIcon = this.CloseFolderIcon;
         }
         #endregion
         #endregion

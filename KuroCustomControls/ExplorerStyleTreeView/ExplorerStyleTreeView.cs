@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KuroUtilities.Icon;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -25,7 +26,7 @@ namespace KuroCustomControls
         public static readonly DependencyProperty RootsProperty =
             DependencyProperty.Register("Roots", typeof(int), typeof(ExplorerStyleTreeView), new PropertyMetadata(null));
         #region FolderImageプロパティ
-        [Description("フォルダのアイコンです。設定しなければ標準のアイコンになります。"),Category("共通")]
+        [Description("フォルダのアイコンです。設定しなければ標準のアイコンになります。"), Category("共通")]
         public ImageSource FolderIcon
         {
             get { return (ImageSource)GetValue(FolderIconProperty); }
@@ -63,11 +64,16 @@ namespace KuroCustomControls
 
         private void SetDefaultDirectories()
         {
-            foreach(var drive in DriveInfo.GetDrives().Where(x => x.IsReady))
+            foreach (var drive in DriveInfo.GetDrives().Where(x => x.IsReady))
             {
                 this.AddChild(new DirectoryNode(drive.RootDirectory));
             }
+            this.AddChild(new DirectoryNode(Environment.GetFolderPath(Environment.SpecialFolder.Desktop)));
+            var dirNode = new DirectoryNode(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+            dirNode.OpenFolderIcon = Properties.Resources.FolderOpen_16x.ToImageSource();
+            dirNode.CloseFolderIcon = Properties.Resources.Folder_16x.ToImageSource();
+            this.AddChild(dirNode);
+            #endregion
         }
-        #endregion
     }
 }
