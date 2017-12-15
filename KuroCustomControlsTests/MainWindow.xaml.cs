@@ -23,6 +23,12 @@ namespace KuroCustomControlsTests
         public MainWindow()
         {
             InitializeComponent();
+
+            //this.explorerStyleTreeView2.SetBinding(KuroCustomControls.ExplorerStyleTreeView.RootDirectoriesProperty, new Binding("ObservableRootDirectories") { Source = this.explorerStyleTreeView });
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
         }
     }
 }

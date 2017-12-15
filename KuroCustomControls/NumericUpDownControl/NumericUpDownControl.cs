@@ -212,7 +212,6 @@ namespace KuroCustomControls
             DependencyProperty.Register("NegativeValueTextColor", typeof(Color), typeof(NumericUpDownControl), new PropertyMetadata(Colors.Red, ColorChanged));
         #endregion
         #region CurrentTextColorプロパティ
-        [Description("現在のTextの色です。(読取専用)"), Category("共通")]
         private static readonly DependencyPropertyKey CurrentTextColorPropertyKey =
             DependencyProperty.RegisterReadOnly(
                 "CurrentTextColor",
@@ -220,6 +219,7 @@ namespace KuroCustomControls
                 typeof(NumericUpDownControl),
                 new PropertyMetadata(new SolidColorBrush(Colors.Black)));
         public static readonly DependencyProperty CurrentTextColorProperty = CurrentTextColorPropertyKey.DependencyProperty;
+        [Description("現在のTextの色です。(読取専用)"), Category("共通")]
         public SolidColorBrush CurrentTextColor
         {
             get { return (SolidColorBrush)GetValue(CurrentTextColorProperty); }

@@ -41,7 +41,6 @@ namespace KuroCustomControls
             DependencyProperty.Register("Minutes", typeof(int), typeof(TimePickerControl), new PropertyMetadata(0, OnMinutesChanged));
         #endregion
         #region Timeプロパティ
-        [Description("現在のHourとMinuteで構成されたTimeSpanです。(読取専用)"), Category("共通")]
         private static readonly DependencyPropertyKey TimePropertyKey =
             DependencyProperty.RegisterReadOnly(
                 "Time",
@@ -49,6 +48,7 @@ namespace KuroCustomControls
                 typeof(TimePickerControl),
                 new PropertyMetadata(new TimeSpan(), OnTimeChanged));
         public static readonly DependencyProperty TimeProperty = TimePropertyKey.DependencyProperty;
+        [Description("現在のHourとMinuteで構成されたTimeSpanです。(読取専用)"), Category("共通")]
         public TimeSpan Time
         {
             get { return (TimeSpan)GetValue(TimeProperty); }
